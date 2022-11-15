@@ -10,4 +10,12 @@ public class Product {
     @Id
     @GeneratedValue(generator = "jpa-uuid")
     private String id;
+
+    private String name;
+
+    private String weight;
+
+    private String amount;
+
+    private String description;
 }
