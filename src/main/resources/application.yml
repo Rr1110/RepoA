@@ -4,3 +4,7 @@ spring:
     url: jdbc:postgresql://localhost:5432/onboarding
     username: "postgres"
     password: "123456"
+  flyway:
+    url: jdbc:postgresql://localhost:5432/onboarding
+    user: "postgres"
+    password: "123456"
