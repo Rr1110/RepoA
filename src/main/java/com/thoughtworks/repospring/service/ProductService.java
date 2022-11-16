@@ -18,19 +18,16 @@ public class ProductService {
 
     public List<Product> getProductLists() {
         List<Product> productList = productRepository.findAll();
-        if (!productList.isEmpty()) {
-            return productList;
-        }
-        throw new ProductListException("Product list is null");
+        return productList;
     }
 
     public void addProduct(Product product) {
-            Product newProduct = Product.builder()
-                    .name(product.getName())
-                    .amount(product.getAmount())
-                    .description(product.getDescription())
-                    .weight(product.getWeight()).build();
-            productRepository.save(newProduct);
+        Product newProduct = Product.builder()
+                .name(product.getName())
+                .amount(product.getAmount())
+                .description(product.getDescription())
+                .weight(product.getWeight()).build();
+        productRepository.save(newProduct);
     }
 
 }
