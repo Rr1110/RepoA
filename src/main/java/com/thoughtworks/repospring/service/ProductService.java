@@ -23,4 +23,14 @@ public class ProductService {
         }
         throw new ProductListException("Product list is null");
     }
+
+    public void addProduct(Product product) {
+            Product newProduct = Product.builder()
+                    .name(product.getName())
+                    .amount(product.getAmount())
+                    .description(product.getDescription())
+                    .weight(product.getWeight()).build();
+            productRepository.save(newProduct);
+    }
+
 }
