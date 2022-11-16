@@ -14,7 +14,6 @@ public class ExceptionalHandler {
     @ResponseBody
     public ErrorResult handle(ProductListException e){
         return ErrorResult.builder()
-                .code(HttpStatus.NO_CONTENT.value())
                 .message(e.getMessage())
                 .build();
     }
@@ -24,7 +23,6 @@ public class ExceptionalHandler {
     @ResponseBody
     public ErrorResult handle(Exception e) {
         return ErrorResult.builder()
-                .code(HttpStatus.BAD_REQUEST.value())
                 .message(e.getMessage())
                 .build();
     }
