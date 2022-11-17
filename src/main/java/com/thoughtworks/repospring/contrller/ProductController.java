@@ -3,15 +3,16 @@ package com.thoughtworks.repospring.contrller;
 import com.thoughtworks.repospring.modal.Product;
 import com.thoughtworks.repospring.service.ProductService;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/products")
+@Validated
 public class ProductController {
 
     private ProductService productService;
@@ -22,7 +23,19 @@ public class ProductController {
 
     @GetMapping("/lists")
     @ResponseStatus(HttpStatus.OK)
-    public List<Product> getProductLists(){
+    public List<Product> getProductLists() {
         return productService.getProductLists();
+    }
+
+    @PostMapping("/increment")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void addProduct(@RequestBody @Valid Product product) {
+        productService.addProduct(product);
+    }
+
+    @DeleteMapping("/deletion/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteProductById(@PathVariable UUID id){
+        productService.deleteProductById(id);
     }
 }
