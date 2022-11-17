@@ -1,11 +1,11 @@
 package com.thoughtworks.repospring.service;
 
-import com.thoughtworks.repospring.common.ProductListException;
 import com.thoughtworks.repospring.modal.Product;
 import com.thoughtworks.repospring.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class ProductService {
@@ -30,4 +30,8 @@ public class ProductService {
         productRepository.save(newProduct);
     }
 
+
+    public void deleteProductById(UUID id) {
+        productRepository.deleteById(id);
+    }
 }

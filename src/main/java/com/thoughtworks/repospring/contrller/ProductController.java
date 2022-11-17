@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/products")
@@ -30,5 +31,10 @@ public class ProductController {
     @ResponseStatus(HttpStatus.CREATED)
     public void addProduct(@RequestBody @Valid Product product) {
         productService.addProduct(product);
+    }
+
+    @DeleteMapping("/deletion/{id}")
+    public void deleteProductById(@PathVariable UUID id){
+        productService.deleteProductById(id);
     }
 }
