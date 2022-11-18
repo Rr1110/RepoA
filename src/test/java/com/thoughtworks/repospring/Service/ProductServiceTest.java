@@ -12,6 +12,9 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.UUID;
+
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ProductServiceTest {
@@ -24,7 +27,7 @@ class ProductServiceTest {
 
 
     @BeforeEach
-    public void setup(){
+    public void setup() {
         productService = new ProductService(productRepository);
     }
 
@@ -34,16 +37,43 @@ class ProductServiceTest {
         Product product = Product.builder().name("cherry")
                 .amount("1").weight("3")
                 .description("Descriptions for cherry").build();
+        when(productRepository.findAll()).thenReturn(List.of(product));
 
         //when
-        Mockito.when(productRepository.findAll()).thenReturn(List.of(product));
-
         List<Product> productLists = productService.getProductLists();
 
         //then
         Assertions.assertFalse(productLists.isEmpty());
         Assertions.assertEquals(productLists, List.of(product));
-        Mockito.verify(productRepository,Mockito.times(1)).findAll();
+        Mockito.verify(productRepository, Mockito.times(1)).findAll();
+    }
+
+    @Test
+    void shouldAddProduct() {
+        // given
+        Product product = Product.builder().name("cherry")
+                .amount("1").weight("3")
+                .description("Descriptions for cherry").build();
+        when(productRepository.save(product)).thenReturn(product);
+
+        //when
+        productService.addProduct(product);
+        //then
+        verify(productRepository, times(1)).save(product);
+    }
+
+    @Test
+    void shouldDeleteProductById() {
+        // given
+        Product product = Product.builder()
+                .id(UUID.randomUUID()).name("cherry")
+                .amount("1").weight("3")
+                .description("Descriptions for cherry").build();
+
+        //when
+        productRepository.deleteById(product.getId());
+        //then
+        verify(productRepository,times(1)).deleteById(product.getId());
     }
 
 }
