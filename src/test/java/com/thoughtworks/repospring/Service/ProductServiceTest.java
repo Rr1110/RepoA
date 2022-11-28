@@ -65,13 +65,15 @@ class ProductServiceTest {
     @Test
     void shouldDeleteProductById() {
         // given
+        UUID id = UUID.randomUUID();
         Product product = Product.builder()
-                .id(UUID.randomUUID()).name("cherry")
+                .id(id).name("cherry")
                 .amount("1").weight("3")
                 .description("Descriptions for cherry").build();
 
         //when
-        productRepository.deleteById(product.getId());
+        productService.deleteProductById(product.getId());
+
         //then
         verify(productRepository,times(1)).deleteById(product.getId());
     }
