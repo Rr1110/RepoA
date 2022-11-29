@@ -9,6 +9,14 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ControllerAdvice
 public class ExceptionalHandler {
 
+    @ExceptionHandler(ProductListException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseBody
+    public ErrorResult productNotExistHandle(ProductListException e){
+        return ErrorResult.builder().message(e.getMessage()).build();
+    }
+
+
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ResponseBody

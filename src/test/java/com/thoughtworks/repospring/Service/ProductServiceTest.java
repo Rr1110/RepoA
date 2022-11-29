@@ -1,5 +1,6 @@
 package com.thoughtworks.repospring.Service;
 
+import com.thoughtworks.repospring.common.ProductListException;
 import com.thoughtworks.repospring.modal.Product;
 import com.thoughtworks.repospring.repository.ProductRepository;
 import com.thoughtworks.repospring.service.ProductService;
@@ -12,6 +13,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.mockito.Mockito.*;
@@ -76,6 +78,30 @@ class ProductServiceTest {
 
         //then
         verify(productRepository,times(1)).deleteById(product.getId());
+    }
+
+    @Test
+    void shouldUpdateProductById(){
+        // given
+        UUID id = UUID.randomUUID();
+        Product oldProduct = Product.builder()
+                .id(id).name("cherry")
+                .amount("1").weight("3")
+                .description("Descriptions for cherry").build();
+
+        Product updateProduct = Product.builder()
+                .id(id).name("strawberry")
+                .amount("100").weight("300")
+                .description("Descriptions for strawberry").build();
+        when(productRepository.findById(oldProduct.getId())).thenReturn(Optional.of(oldProduct));
+        when(productRepository.save(updateProduct)).thenReturn(updateProduct);
+
+        //when
+        productService.updateProductById(updateProduct);
+
+        //then
+        verify(productRepository,times(1)).save(updateProduct);
+        verify(productRepository,times(1)).findById(oldProduct.getId());
     }
 
 }
