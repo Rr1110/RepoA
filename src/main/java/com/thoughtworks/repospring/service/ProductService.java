@@ -1,6 +1,6 @@
 package com.thoughtworks.repospring.service;
 
-import com.thoughtworks.repospring.common.ProductListException;
+import com.thoughtworks.repospring.common.ProductNotExistException;
 import com.thoughtworks.repospring.modal.Product;
 import com.thoughtworks.repospring.repository.ProductRepository;
 import org.springframework.stereotype.Service;
@@ -47,7 +47,7 @@ public class ProductService {
             updateProduct.setDescription(product.getDescription());
             productRepository.save(updateProduct);
         }else{
-            throw new ProductListException("Product not found");
+            throw new ProductNotExistException("Product not found");
         }
     }
 }
