@@ -1,11 +1,11 @@
-package com.thoughtworks.repospring.Service;
+package com.thoughtworks.repospring.service;
 
-import com.thoughtworks.repospring.common.ProductListException;
+import com.thoughtworks.repospring.common.ProductNotExistException;
 import com.thoughtworks.repospring.modal.Product;
 import com.thoughtworks.repospring.repository.ProductRepository;
-import com.thoughtworks.repospring.service.ProductService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -80,28 +80,47 @@ class ProductServiceTest {
         verify(productRepository,times(1)).deleteById(product.getId());
     }
 
-    @Test
-    void shouldUpdateProductById(){
-        // given
-        UUID id = UUID.randomUUID();
-        Product oldProduct = Product.builder()
-                .id(id).name("cherry")
-                .amount("1").weight("3")
-                .description("Descriptions for cherry").build();
+    @Nested
+    class updateProduct {
+        @Test
+        void shouldUpdateProductById() {
+            // given
+            UUID id = UUID.randomUUID();
+            Product oldProduct = Product.builder()
+                    .id(id).name("cherry")
+                    .amount("1").weight("3")
+                    .description("Descriptions for cherry").build();
 
-        Product updateProduct = Product.builder()
-                .id(id).name("strawberry")
-                .amount("100").weight("300")
-                .description("Descriptions for strawberry").build();
-        when(productRepository.findById(oldProduct.getId())).thenReturn(Optional.of(oldProduct));
-        when(productRepository.save(updateProduct)).thenReturn(updateProduct);
+            Product updateProduct = Product.builder()
+                    .id(id).name("strawberry")
+                    .amount("100").weight("300")
+                    .description("Descriptions for strawberry").build();
+            when(productRepository.findById(oldProduct.getId())).thenReturn(Optional.of(oldProduct));
+            when(productRepository.save(updateProduct)).thenReturn(updateProduct);
 
-        //when
-        productService.updateProductById(updateProduct);
+            //when
+            productService.updateProductById(updateProduct);
 
-        //then
-        verify(productRepository,times(1)).save(updateProduct);
-        verify(productRepository,times(1)).findById(oldProduct.getId());
+            //then
+            verify(productRepository, times(1)).save(updateProduct);
+            verify(productRepository, times(1)).findById(oldProduct.getId());
+        }
+
+        @Test
+        void shouldThrowExceptionWhenIdNotExist() {
+            // given
+            Product updateProduct = Product.builder()
+                    .id(UUID.randomUUID()).name("strawberry")
+                    .amount("100").weight("300")
+                    .description("Descriptions for strawberry").build();
+
+            when(productRepository.findById(updateProduct.getId())).thenReturn(Optional.empty());
+
+            //when
+            //then
+            Assertions.assertThrows(ProductNotExistException.class, ()->{productService.updateProductById(updateProduct);});
+            verify(productRepository,times(1)).findById(updateProduct.getId());
+        }
     }
 
 }
