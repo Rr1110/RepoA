@@ -27,18 +27,22 @@ class ProductServiceTest {
     @Mock
     private ProductRepository productRepository;
 
+    private Product product;
 
     @BeforeEach
     public void setup() {
         productService = new ProductService(productRepository);
+
+        UUID id = UUID.randomUUID();
+        product = Product.builder()
+                .id(id).name("cherry")
+                .amount("1").weight("3")
+                .description("Descriptions for cherry").build();
     }
 
     @Test
     void shouldReturnProductList() {
         // given
-        Product product = Product.builder().name("cherry")
-                .amount("1").weight("3")
-                .description("Descriptions for cherry").build();
         when(productRepository.findAll()).thenReturn(List.of(product));
 
         //when
@@ -53,9 +57,6 @@ class ProductServiceTest {
     @Test
     void shouldAddProduct() {
         // given
-        Product product = Product.builder().name("cherry")
-                .amount("1").weight("3")
-                .description("Descriptions for cherry").build();
         when(productRepository.save(product)).thenReturn(product);
 
         //when
@@ -67,12 +68,6 @@ class ProductServiceTest {
     @Test
     void shouldDeleteProductById() {
         // given
-        UUID id = UUID.randomUUID();
-        Product product = Product.builder()
-                .id(id).name("cherry")
-                .amount("1").weight("3")
-                .description("Descriptions for cherry").build();
-
         //when
         productService.deleteProductById(product.getId());
 
@@ -86,16 +81,12 @@ class ProductServiceTest {
         void shouldUpdateProductById() {
             // given
             UUID id = UUID.randomUUID();
-            Product oldProduct = Product.builder()
-                    .id(id).name("cherry")
-                    .amount("1").weight("3")
-                    .description("Descriptions for cherry").build();
 
             Product updateProduct = Product.builder()
                     .id(id).name("strawberry")
                     .amount("100").weight("300")
                     .description("Descriptions for strawberry").build();
-            when(productRepository.findById(oldProduct.getId())).thenReturn(Optional.of(oldProduct));
+            when(productRepository.findById(product.getId())).thenReturn(Optional.of(product));
             when(productRepository.save(updateProduct)).thenReturn(updateProduct);
 
             //when
@@ -103,23 +94,18 @@ class ProductServiceTest {
 
             //then
             verify(productRepository, times(1)).save(updateProduct);
-            verify(productRepository, times(1)).findById(oldProduct.getId());
+            verify(productRepository, times(1)).findById(product.getId());
         }
 
         @Test
         void shouldThrowExceptionWhenIdNotExist() {
             // given
-            Product updateProduct = Product.builder()
-                    .id(UUID.randomUUID()).name("strawberry")
-                    .amount("100").weight("300")
-                    .description("Descriptions for strawberry").build();
-
-            when(productRepository.findById(updateProduct.getId())).thenReturn(Optional.empty());
+            when(productRepository.findById(product.getId())).thenReturn(Optional.empty());
 
             //when
             //then
-            Assertions.assertThrows(ProductNotExistException.class, ()->{productService.updateProductById(updateProduct);});
-            verify(productRepository,times(1)).findById(updateProduct.getId());
+            Assertions.assertThrows(ProductNotExistException.class, ()-> productService.updateProductById(product));
+            verify(productRepository,times(1)).findById(product.getId());
         }
     }
 
