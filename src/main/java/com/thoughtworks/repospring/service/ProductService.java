@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductService {
@@ -48,6 +49,17 @@ public class ProductService {
             productRepository.save(updateProduct);
         }else{
             throw new ProductNotExistException("Product not found");
+        }
+    }
+
+    public List<Product> getProductByName(String name, String weight) {
+        List<Product> findProductByName = productRepository.findProductByName(name);
+        if (weight == null) {
+            return findProductByName;
+        }else{
+            return findProductByName.stream()
+                    .filter(product -> product.getWeight().equals(weight))
+                    .collect(Collectors.toList());
         }
     }
 }

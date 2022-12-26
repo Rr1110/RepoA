@@ -35,13 +35,19 @@ public class ProductController {
 
     @DeleteMapping("/deletion/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public void deleteProductById(@PathVariable UUID id){
+    public void deleteProductById(@PathVariable UUID id) {
         productService.deleteProductById(id);
     }
 
     @PutMapping("/update/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public void updateProductById(@RequestBody Product product){
+    public void updateProductById(@RequestBody Product product) {
         productService.updateProductById(product);
+    }
+
+    @GetMapping("list/{name}")
+    @ResponseStatus(HttpStatus.OK)
+    public List<Product> getProductByName(@PathVariable String name, @RequestParam(required = false) String weight) {
+        return productService.getProductByName(name, weight);
     }
 }

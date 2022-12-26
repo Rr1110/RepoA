@@ -12,3 +12,11 @@
 
 1. 使用Java和Spring boot实现（GET POST DELETE PUT）endpoint 各一个 
 2. 涵盖参数校验，异常捕获，响应
+3. TDD开发  按制定要求查询。
+
+
+## 项目启动
+ - 使用脚本启动
+    ```./auto/dev``` 
+ - 使用脚本运行测试
+    ``./auto/test``

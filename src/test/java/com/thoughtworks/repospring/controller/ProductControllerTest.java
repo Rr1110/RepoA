@@ -79,4 +79,10 @@ class ProductControllerTest {
                 .andExpect(status().isOk());
     }
 
+    @Test
+    void shouldReturnSuitProduct() throws Exception {
+
+        mockMvc.perform(get("/products/list/{name}","apple", null))
+                .andExpect(status().isOk());
+    }
 }
