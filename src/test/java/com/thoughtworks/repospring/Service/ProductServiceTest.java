@@ -28,15 +28,15 @@ class ProductServiceTest {
     private ProductRepository productRepository;
 
     private Product product;
+    UUID id = UUID.randomUUID();
 
     @BeforeEach
     public void setup() {
         productService = new ProductService(productRepository);
 
-        UUID id = UUID.randomUUID();
         product = Product.builder()
                 .id(id).name("cherry")
-                .amount("1").weight("3")
+                .amount("1").weight("30")
                 .description("Descriptions for cherry").build();
     }
 
@@ -72,7 +72,7 @@ class ProductServiceTest {
         productService.deleteProductById(product.getId());
 
         //then
-        verify(productRepository,times(1)).deleteById(product.getId());
+        verify(productRepository, times(1)).deleteById(product.getId());
     }
 
     @Nested
@@ -104,8 +104,43 @@ class ProductServiceTest {
 
             //when
             //then
-            Assertions.assertThrows(ProductNotExistException.class, ()-> productService.updateProductById(product));
-            verify(productRepository,times(1)).findById(product.getId());
+            Assertions.assertThrows(ProductNotExistException.class, () -> productService.updateProductById(product));
+            verify(productRepository, times(1)).findById(product.getId());
+        }
+    }
+
+    @Nested
+    class getProductByName {
+
+        @Test
+        void shouldReturnProductByName() {
+            // given
+            when(productRepository.findProductByName("cherry")).thenReturn(List.of(product));
+
+            //when
+
+            List<Product> productLists = productService.getProductByName("cherry", null);
+
+            //then
+            Assertions.assertFalse(productLists.isEmpty());
+            Assertions.assertEquals(productLists, List.of(product));
+            Mockito.verify(productRepository, Mockito.times(1)).findProductByName("cherry");
+
+        }
+
+        @Test
+        void shouldReturnProductByNameAndWeight() {
+            // given
+            when(productRepository.findProductByName("cherry")).thenReturn(List.of(product));
+
+            //when
+            List<Product> productLists = productService.getProductByName("cherry", "30");
+
+            //then
+            Assertions.assertFalse(productLists.isEmpty());
+            Assertions.assertEquals(productLists, List.of(product));
+            Mockito.verify(productRepository, Mockito.times(1)).findProductByName("cherry");
+
         }
     }
 
