@@ -38,4 +38,10 @@ public class ProductController {
     public void deleteProductById(@PathVariable UUID id){
         productService.deleteProductById(id);
     }
+
+    @PutMapping("/update")
+    @ResponseStatus(HttpStatus.OK)
+    public void updateProductById(@RequestBody Product product){
+        productService.updateProductById(product);
+    }
 }
