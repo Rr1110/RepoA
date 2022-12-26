@@ -1,4 +1,4 @@
-package com.thoughtworks.repospring.contrller;
+package com.thoughtworks.repospring.controller;
 
 import com.thoughtworks.repospring.modal.Product;
 import com.thoughtworks.repospring.service.ProductService;
