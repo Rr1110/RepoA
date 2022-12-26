@@ -39,7 +39,7 @@ public class ProductController {
         productService.deleteProductById(id);
     }
 
-    @PutMapping("/update")
+    @PutMapping("/update/{id}")
     @ResponseStatus(HttpStatus.OK)
     public void updateProductById(@RequestBody Product product){
         productService.updateProductById(product);

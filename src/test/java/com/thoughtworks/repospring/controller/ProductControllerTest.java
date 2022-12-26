@@ -30,7 +30,6 @@ class ProductControllerTest {
     private JacksonTester<Product> productJacksonTester;
 
     private Product product;
-    UUID id = UUID.randomUUID();
 
     @BeforeEach
     public void beforeEach() {
@@ -62,6 +61,21 @@ class ProductControllerTest {
         UUID id = UUID.fromString("93ade9ce-3f92-4608-8e5e-0fad25f92e9e");
 
         mockMvc.perform(delete("/products/deletion/{id}", id))
+                .andExpect(status().isOk());
+    }
+
+
+    @Test
+    void shouldUpdateProductSuccess() throws Exception {
+
+        UUID id = UUID.fromString("a6ee8e9a-1e30-44ec-aed7-bdf687b23df2");
+        Product newProduct = Product.builder().id(id).name("new product Name")
+                .weight("10").amount("2").description("description").build();
+
+        mockMvc.perform(put("/products/update/{id}", id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(productJacksonTester.write(newProduct).getJson()))
+
                 .andExpect(status().isOk());
     }
 
