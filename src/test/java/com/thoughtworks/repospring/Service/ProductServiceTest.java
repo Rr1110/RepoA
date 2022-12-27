@@ -2,6 +2,7 @@ package com.thoughtworks.repospring.service;
 
 import com.thoughtworks.repospring.common.ProductNotExistException;
 import com.thoughtworks.repospring.modal.Product;
+import com.thoughtworks.repospring.modal.UpdateProductRequest;
 import com.thoughtworks.repospring.repository.ProductRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -83,14 +84,17 @@ class ProductServiceTest {
             UUID id = UUID.randomUUID();
 
             Product updateProduct = Product.builder()
-                    .id(id).name("strawberry")
+                    .id(product.getId()).name("cherry")
                     .amount("100").weight("300")
                     .description("Descriptions for strawberry").build();
             when(productRepository.findById(product.getId())).thenReturn(Optional.of(product));
             when(productRepository.save(updateProduct)).thenReturn(updateProduct);
 
+            UpdateProductRequest updateProductRequest = UpdateProductRequest.builder()
+                    .amount("100").weight("300").description("Descriptions for strawberry").build();
+
             //when
-            productService.updateProductById(updateProduct);
+            productService.updateProductById(product.getId(), updateProductRequest);
 
             //then
             verify(productRepository, times(1)).save(updateProduct);
@@ -104,7 +108,7 @@ class ProductServiceTest {
 
             //when
             //then
-            Assertions.assertThrows(ProductNotExistException.class, () -> productService.updateProductById(product));
+            Assertions.assertThrows(ProductNotExistException.class, () -> productService.updateProductById(id, new UpdateProductRequest()));
             verify(productRepository, times(1)).findById(product.getId());
         }
     }

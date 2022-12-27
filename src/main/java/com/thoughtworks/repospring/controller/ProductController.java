@@ -1,6 +1,7 @@
 package com.thoughtworks.repospring.controller;
 
 import com.thoughtworks.repospring.modal.Product;
+import com.thoughtworks.repospring.modal.UpdateProductRequest;
 import com.thoughtworks.repospring.service.ProductService;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
@@ -41,8 +42,8 @@ public class ProductController {
 
     @PutMapping("/update/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public void updateProductById(@RequestBody Product product) {
-        productService.updateProductById(product);
+    public void updateProductById(@PathVariable UUID id, @RequestBody UpdateProductRequest updateProductRequest) {
+        productService.updateProductById(id, updateProductRequest);
     }
 
     @GetMapping("list/{name}")
