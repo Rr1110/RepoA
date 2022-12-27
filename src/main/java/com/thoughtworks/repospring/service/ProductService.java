@@ -2,12 +2,14 @@ package com.thoughtworks.repospring.service;
 
 import com.thoughtworks.repospring.common.ProductNotExistException;
 import com.thoughtworks.repospring.modal.Product;
+import com.thoughtworks.repospring.modal.UpdateProductRequest;
 import com.thoughtworks.repospring.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductService {
@@ -37,17 +39,27 @@ public class ProductService {
         productRepository.deleteById(id);
     }
 
-    public void updateProductById(Product product) {
-        Optional<Product> optionalProduct = productRepository.findById(product.getId());
+    public void updateProductById(UUID id, UpdateProductRequest updateProductRequest) {
+        Optional<Product> optionalProduct = productRepository.findById(id);
         if (optionalProduct.isPresent()) {
             Product updateProduct = optionalProduct.get();
-            updateProduct.setName(product.getName());
-            updateProduct.setAmount(product.getAmount());
-            updateProduct.setWeight(product.getWeight());
-            updateProduct.setDescription(product.getDescription());
+            updateProduct.setAmount(updateProductRequest.getAmount());
+            updateProduct.setWeight(updateProductRequest.getWeight());
+            updateProduct.setDescription(updateProductRequest.getDescription());
             productRepository.save(updateProduct);
         }else{
             throw new ProductNotExistException("Product not found");
+        }
+    }
+
+    public List<Product> getProductByName(String name, String weight) {
+        List<Product> findProductByName = productRepository.findProductByName(name);
+        if (weight == null) {
+            return findProductByName;
+        }else{
+            return findProductByName.stream()
+                    .filter(product -> product.getWeight().equals(weight))
+                    .collect(Collectors.toList());
         }
     }
 }

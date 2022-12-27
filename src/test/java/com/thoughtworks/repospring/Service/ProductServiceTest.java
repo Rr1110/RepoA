@@ -2,6 +2,7 @@ package com.thoughtworks.repospring.service;
 
 import com.thoughtworks.repospring.common.ProductNotExistException;
 import com.thoughtworks.repospring.modal.Product;
+import com.thoughtworks.repospring.modal.UpdateProductRequest;
 import com.thoughtworks.repospring.repository.ProductRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,15 +29,15 @@ class ProductServiceTest {
     private ProductRepository productRepository;
 
     private Product product;
+    UUID id = UUID.randomUUID();
 
     @BeforeEach
     public void setup() {
         productService = new ProductService(productRepository);
 
-        UUID id = UUID.randomUUID();
         product = Product.builder()
                 .id(id).name("cherry")
-                .amount("1").weight("3")
+                .amount("1").weight("30")
                 .description("Descriptions for cherry").build();
     }
 
@@ -72,7 +73,7 @@ class ProductServiceTest {
         productService.deleteProductById(product.getId());
 
         //then
-        verify(productRepository,times(1)).deleteById(product.getId());
+        verify(productRepository, times(1)).deleteById(product.getId());
     }
 
     @Nested
@@ -83,14 +84,17 @@ class ProductServiceTest {
             UUID id = UUID.randomUUID();
 
             Product updateProduct = Product.builder()
-                    .id(id).name("strawberry")
+                    .id(product.getId()).name("cherry")
                     .amount("100").weight("300")
                     .description("Descriptions for strawberry").build();
             when(productRepository.findById(product.getId())).thenReturn(Optional.of(product));
             when(productRepository.save(updateProduct)).thenReturn(updateProduct);
 
+            UpdateProductRequest updateProductRequest = UpdateProductRequest.builder()
+                    .amount("100").weight("300").description("Descriptions for strawberry").build();
+
             //when
-            productService.updateProductById(updateProduct);
+            productService.updateProductById(product.getId(), updateProductRequest);
 
             //then
             verify(productRepository, times(1)).save(updateProduct);
@@ -104,8 +108,43 @@ class ProductServiceTest {
 
             //when
             //then
-            Assertions.assertThrows(ProductNotExistException.class, ()-> productService.updateProductById(product));
-            verify(productRepository,times(1)).findById(product.getId());
+            Assertions.assertThrows(ProductNotExistException.class, () -> productService.updateProductById(id, new UpdateProductRequest()));
+            verify(productRepository, times(1)).findById(product.getId());
+        }
+    }
+
+    @Nested
+    class getProductByName {
+
+        @Test
+        void shouldReturnProductByName() {
+            // given
+            when(productRepository.findProductByName("cherry")).thenReturn(List.of(product));
+
+            //when
+
+            List<Product> productLists = productService.getProductByName("cherry", null);
+
+            //then
+            Assertions.assertFalse(productLists.isEmpty());
+            Assertions.assertEquals(productLists, List.of(product));
+            Mockito.verify(productRepository, Mockito.times(1)).findProductByName("cherry");
+
+        }
+
+        @Test
+        void shouldReturnProductByNameAndWeight() {
+            // given
+            when(productRepository.findProductByName("cherry")).thenReturn(List.of(product));
+
+            //when
+            List<Product> productLists = productService.getProductByName("cherry", "30");
+
+            //then
+            Assertions.assertFalse(productLists.isEmpty());
+            Assertions.assertEquals(productLists, List.of(product));
+            Mockito.verify(productRepository, Mockito.times(1)).findProductByName("cherry");
+
         }
     }
 
